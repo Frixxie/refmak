@@ -10,7 +10,6 @@ struct Reference {
     title: String,
     publisher: String,
     year: String,
-    address: String,
     isbn: String,
 }
 
@@ -40,8 +39,8 @@ impl fmt::Display for Reference {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "@book{{{}\nauthor = {{{}}}\ntitle = {{{}}}\npages = {{{}}}\npublisher = {{{}}}\nyear = {{{}}}\nisbn = {{{}}}\n}}",
-            self.name, self.authors, self.title, self.pages, self.publisher, self.year, self.address, self.isbn
+            "@book{{{}\n\tauthor = {{{}}}\n\ttitle = {{{}}}\n\tpages = {{{}}}\n\tpublisher = {{{}}}\n\tyear = {{{}}}\n\tisbn = {{{}}}\n}}",
+            self.name, self.authors, self.title, self.pages, self.publisher, self.year, self.isbn
         )
     }
 }
@@ -94,12 +93,12 @@ async fn main() -> Result<(), io::Error> {
     date.remove(0);
     date.truncate(4);
 
-    let pages = res["number_of_pages"].to_string().replace('"',"");
+    let pages = res["number_of_pages"].to_string().replace('"', "");
 
     // println!("{} {} {} {} {}", tmp, title, publishers, isbn, date);
 
     let reference = Reference::new(
-        "test".to_string(),
+        title.to_lowercase().replace(" ", ""),
         tmp,
         pages,
         title,
