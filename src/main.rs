@@ -51,7 +51,7 @@ impl fmt::Display for Reference {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "@book{{{},\n  author = {{{}}},\n  title = {{{}}},\n  pages = {{{}}},\n  publisher = {{{}}},\n   year = {{{}}},\n  isbn = {{{}}}\n}}",
+            "@book{{{},\n  author = {{{}}},\n  title = {{{}}},\n  pages = {{{}}},\n  publisher = {{{}}},\n  year = {{{}}},\n  isbn = {{{}}}\n}}",
             self.name, self.authors, self.title, self.pages, self.publisher, self.year, self.isbn
         )
     }
