@@ -2,6 +2,15 @@ use reqwest::get;
 use serde_json::Value;
 use std::io;
 
+struct Reference {
+    name : String,
+    authors : String,
+    publisher : String,
+    year: u32,
+    address: String,
+    isbn: u32,
+}
+
 /// Gets the author from openlibrary.org/author...
 async fn get_author(url: &str, author: &str) -> Value {
     let new_url = format!("{}{}.json", url, author);
