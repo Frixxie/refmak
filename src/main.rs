@@ -2,6 +2,18 @@ use reqwest::get;
 use serde_json::Value;
 use std::fmt;
 use std::io;
+use structopt::StructOpt;
+
+#[derive(Debug, StructOpt)]
+#[structopt(
+    name = "REFerence Maker",
+    about = "Search after bibtex references using ISBN"
+)]
+struct Opt {
+    ///ISBN
+    #[structopt(short, long, default_value = "")]
+    isbn: String
+}
 
 struct Reference {
     name: String,
@@ -39,13 +51,13 @@ impl fmt::Display for Reference {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "@book{{{}\n\tauthor = {{{}}}\n\ttitle = {{{}}}\n\tpages = {{{}}}\n\tpublisher = {{{}}}\n\tyear = {{{}}}\n\tisbn = {{{}}}\n}}",
+            "@book{{{},\n  author = {{{}}},\n  title = {{{}}},\n  pages = {{{}}},\n  publisher = {{{}}},\n   year = {{{}}},\n  isbn = {{{}}}\n}}",
             self.name, self.authors, self.title, self.pages, self.publisher, self.year, self.isbn
         )
     }
 }
 
-/// Gets the author from openlibrary.org/author...
+/// Gets the author from openlibrary.org/author/...
 async fn get_author(url: &str, author: &str) -> Value {
     let new_url = format!("{}{}.json", url, author);
     let res = get(new_url).await.unwrap().text().await.unwrap();
@@ -65,9 +77,7 @@ fn get_authors_links(authors: &[Value]) -> Vec<String> {
         .collect()
 }
 
-#[tokio::main]
-async fn main() -> Result<(), io::Error> {
-    let isbn = "9781292025407";
+async fn openlibrary(isbn: &str) -> Reference {
     let res = get_by_isbn("https://openlibrary.org/isbn/", isbn).await;
     let authors_links = get_authors_links(res["authors"].as_array().unwrap());
     let mut authors: Vec<String> = Vec::new();
@@ -95,9 +105,7 @@ async fn main() -> Result<(), io::Error> {
 
     let pages = res["number_of_pages"].to_string().replace('"', "");
 
-    // println!("{} {} {} {} {}", tmp, title, publishers, isbn, date);
-
-    let reference = Reference::new(
+    Reference::new(
         title.to_lowercase().replace(" ", ""),
         tmp,
         pages,
@@ -105,7 +113,16 @@ async fn main() -> Result<(), io::Error> {
         publishers,
         date,
         isbn.to_string(),
-    );
+    )
+}
+
+#[tokio::main]
+async fn main() -> Result<(), io::Error> {
+    let opt = Opt::from_args();
+    if opt.isbn.is_empty() {
+        panic!("ISBN is missing use -i <ISBN>")
+    }
+    let reference = openlibrary(&opt.isbn).await;
     println!("{}", reference);
     Ok(())
 }
