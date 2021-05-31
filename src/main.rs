@@ -22,7 +22,6 @@ impl Reference {
         title: String,
         publisher: String,
         year: String,
-        address: String,
         isbn: String,
     ) -> Reference {
         Reference {
@@ -32,7 +31,6 @@ impl Reference {
             title,
             publisher,
             year,
-            address,
             isbn,
         }
     }
@@ -42,7 +40,7 @@ impl fmt::Display for Reference {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "@book{{{}\nauthor = {{{}}}\ntitle = {{{}}}\npages = {{{}}}\npublisher = {{{}}}\nyear = {{{}}}\naddress = {{{}}}\nisbn = {{{}}}\n}}",
+            "@book{{{}\nauthor = {{{}}}\ntitle = {{{}}}\npages = {{{}}}\npublisher = {{{}}}\nyear = {{{}}}\nisbn = {{{}}}\n}}",
             self.name, self.authors, self.title, self.pages, self.publisher, self.year, self.address, self.isbn
         )
     }
@@ -107,7 +105,6 @@ async fn main() -> Result<(), io::Error> {
         title,
         publishers,
         date,
-        "kake".to_string(),
         isbn.to_string(),
     );
     println!("{}", reference);
