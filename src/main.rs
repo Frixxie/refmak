@@ -6,13 +6,13 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
-    name = "REFerence Maker",
+    name = "REFerence MAKer",
     about = "Search after bibtex references using ISBN"
 )]
 struct Opt {
     ///ISBN
     #[structopt(short, long, default_value = "")]
-    isbn: String
+    isbn: String,
 }
 
 struct Reference {
@@ -119,10 +119,14 @@ async fn openlibrary(isbn: &str) -> Reference {
 #[tokio::main]
 async fn main() -> Result<(), io::Error> {
     let opt = Opt::from_args();
-    if opt.isbn.is_empty() {
-        panic!("ISBN is missing use -i <ISBN>")
+    match opt.isbn.as_str() {
+        "" => {
+            panic!("ISBN is missing use -i <ISBN>")
+        }
+        _ => {
+            let reference = openlibrary(&opt.isbn).await;
+            println!("{}", reference);
+        }
     }
-    let reference = openlibrary(&opt.isbn).await;
-    println!("{}", reference);
     Ok(())
 }
